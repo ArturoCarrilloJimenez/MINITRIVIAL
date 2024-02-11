@@ -135,7 +135,7 @@ public class Interfaz {
                     }
                 } while (respuestaCorrecta.length() > 199);   
 
-                opciones += respuestaCorrecta + ";";
+                opciones += respuestaCorrecta + "|";
 
                 for (int i = 0; i < 2; i++) {
                     System.out.println("\nIntroduzca una opcion:");
@@ -148,7 +148,7 @@ public class Interfaz {
                         }
                     } while (opcion.length() > 199);   
 
-                    opciones += opcion + ";";
+                    opciones += opcion + "|";
                 }
                 break;
             case 3: // Pregunta de si o no
@@ -160,7 +160,7 @@ public class Interfaz {
                     respuestaCorrecta = scanner.nextLine();
                 } while (respuestaCorrecta.equals("si") == false && respuestaCorrecta.equalsIgnoreCase("no") == false);
 
-                opciones = "si;no";
+                opciones = "si|no";
                 break;
             default:
                 break;
