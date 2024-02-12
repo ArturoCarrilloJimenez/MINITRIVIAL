@@ -11,6 +11,7 @@ public class GestionFichero {
      * Este tiene un tamaño de 1416 bytes.
      * 
      * @param pregunta
+     * @param categoria
      * @param tipo
      * @param respuestaCorrecta
      * @param opciones
@@ -159,5 +160,54 @@ public class GestionFichero {
         }
 
         return arrayList;
+    }
+
+    /** 
+     * 
+     * Metodo que busca una pregunta por su id y debuelve en array de String
+     * 
+     * @return Este devuelve null si no encuentra nada y si a encontrado la pregunta este devuelve un array de String
+    */
+    public String[] buscarId(int id) {
+        String[] registro = null;
+
+        RandomAccessFile file = null;
+        
+        try {
+            file = new RandomAccessFile(NOMBRE_FICHERO, "r");
+
+            while (file.getFilePointer() < file.length()) {
+                file.seek((id - 1) * TAMAÑO_PREGUNTA);
+                
+                registro = new String[7];
+
+                registro[0] = String.valueOf(file.readInt()); //ID
+
+                byte[] pregunta = new byte[600];
+                file.read(pregunta);
+                registro[1] = new String(pregunta); //Pregunta
+
+                registro[2] = String.valueOf(file.readInt()); //CategoriaRespuesta
+
+                registro[3] = String.valueOf(file.readInt()); //TipoRespuesta
+
+                byte[] respuesta = new byte[200];
+                file.read(respuesta);
+                registro[4] = new String(respuesta); //RespuestaCorrecta
+                
+                byte[] opcion = new byte[600];
+                file.read(opcion);
+                registro[5] = new String(opcion); //Opciones
+
+                registro[6] = String.valueOf(file.readInt()); //Estado
+
+            }
+
+            file.close();
+        } catch (Exception e) {
+            registro = null;
+        }
+
+        return registro;
     }
 }

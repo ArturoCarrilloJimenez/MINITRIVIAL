@@ -36,7 +36,7 @@ public class Interfaz {
                     verListaPreguntas();
                     break;
                 case 3:
-                    
+                    buscarPregunta();
                     break;
                 case 4:
                     
@@ -243,66 +243,100 @@ public class Interfaz {
      * @param pregunta Array de String con los datos de la pregunta.
      */
     public  static void mostrarPregunta(String[] pregunta) {
-                System.out.println("\nID: " + pregunta[0]);
-                System.out.println("Pregunta: " + pregunta[1]);
+        System.out.println("\nID: " + pregunta[0]);
+        System.out.println("Pregunta: " + pregunta[1]);
 
-                System.out.print("Categoria: ");
-                int categoria = Integer.parseInt(pregunta[2]);
-                switch (categoria) {
-                    case 1:
-                        System.out.println("Geografía");
-                        break;
-                    case 2:
-                        System.out.println("Entretenimiento");
-                        break;
-                    case 3:
-                        System.out.println("Historia");
-                        break; 
-                    case 4:
-                        System.out.println("Arte y Literatura");
-                        break;
-                    case 5:
-                        System.out.println("Deportes y Ocio");
-                        break;
-                    case 6:
-                        System.out.println("Ciencia y Naturaleza");
-                        break;
-                    default:
-                        break;
-                }
+        System.out.print("Categoria: ");
+        int categoria = Integer.parseInt(pregunta[2]);
+        switch (categoria) {
+            case 1:
+                System.out.println("Geografía");
+                break;
+            case 2:
+                System.out.println("Entretenimiento");
+                break;
+            case 3:
+                System.out.println("Historia");
+                break; 
+            case 4:
+                System.out.println("Arte y Literatura");
+                break;
+            case 5:
+                System.out.println("Deportes y Ocio");
+                break;
+            case 6:
+                System.out.println("Ciencia y Naturaleza");
+                break;
+            default:
+                break;
+        }
 
-                System.out.print("Tipo: ");
-                int tipo = Integer.parseInt(pregunta[3]);
-                switch (tipo) {
-                    case 1:
-                        System.out.println("Pregunta simple");
-                        break;
-                    case 2:
-                        System.out.println("Pregunta con respuesta multiple");
-                        break;
-                    case 3:
-                        System.out.println("Pregunta de si o no");
-                        break; 
-                    default:
-                        break;
-                }
+        System.out.print("Tipo: ");
+        int tipo = Integer.parseInt(pregunta[3]);
+        switch (tipo) {
+            case 1:
+                System.out.println("Pregunta simple");
+                break;
+            case 2:
+                System.out.println("Pregunta con respuesta multiple");
+                break;
+            case 3:
+                System.out.println("Pregunta de si o no");
+                break; 
+            default:
+                break;
+        }
 
-                System.out.println("Respuesta correcta: " + pregunta[4]);
+        System.out.println("Respuesta correcta: " + pregunta[4]);
 
-                if (!pregunta[5].equals("")) {
-                    String[] separatedStrings = pregunta[5].split("\\|");
+        if (!pregunta[5].equals("")) {
+            String[] separatedStrings = pregunta[5].split("\\|");
 
-                    for (int i = 0; i < separatedStrings.length; i++) {
-                        System.out.print("Opcion " + (i + 1) + ": ");
-                        System.out.println(separatedStrings[i]);
+            for (int i = 0; i < separatedStrings.length; i++) {
+                System.out.print("Opcion " + (i + 1) + ": ");
+                System.out.println(separatedStrings[i]);
+            }
+        }
+
+        System.out.print("Estado: ");
+        if (pregunta[6].equals("0")) {
+            System.out.println("Activa");
+        } else {
+            System.out.println("Inactiva");
+        }
+    }
+
+    public static void buscarPregunta() {
+        System.out.println("\nPor que parametro deseas buscar la pregunta");
+
+        System.out.println("\n1. Id");
+
+        int opcion;
+
+        do {
+            System.out.println("\nPor favor, elija una de las opciónes anteriores: ");
+            opcion = introducirNumero();
+        } while (opcion < 1 || opcion > 1);
+
+        switch (opcion) {
+            case 1:
+                int id;
+                do {
+                    System.out.print("Introduce el Id: ");
+                    id = introducirNumero();
+                    if (id < 1) {
+                        System.out.println("Solo es posible introducir un id mayor o igual a 1");
                     }
-                }
+                } while (id < 1);
 
-                System.out.print("Estado: ");
-                if (pregunta[6].equals("0")) {
-                    System.out.println("Activa");
-                } else {
-                    System.out.println("Inactiva");
-                }
+                String[] pregunta = gestionFichero.buscarId(id);
+
+                if (pregunta != null) {mostrarPregunta(pregunta);}
+                else {System.out.println("No se ha encontrado ninguna pregunta con ese Id.");}
+
+                break;
+            default:
+                break;
+        }
     }
 }
