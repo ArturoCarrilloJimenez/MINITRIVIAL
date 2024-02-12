@@ -1,13 +1,14 @@
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 
 public class GestionFichero {
     private static final String NOMBRE_FICHERO = "fichero.bin";
-    public static final int TAMAÑO_PREGUNTA = 1412;
+    public static final int TAMAÑO_PREGUNTA = 1416;
 
     /**
      * Este metodo añade una pregunta al fichero de preguntas y respuestas, si el fichero no existe lo crea.
-     * Este tiene un formato de 5 campos: idPregunta (int), pregunta (String), tipo(int), respuestaCorrecta (String), opciones (String), estado (int) 
-     * Este tiene un tamaño de 1412 bytes.
+     * Este tiene un formato de 6 campos: idPregunta (int), pregunta (String), categoria(int), tipo(int), respuestaCorrecta (String), opciones (String), estado (int) 
+     * Este tiene un tamaño de 1416 bytes.
      * 
      * @param pregunta
      * @param tipo
@@ -16,7 +17,7 @@ public class GestionFichero {
      * 
      * @return Devuelve 0 si se ha añadido correctamente, 1 si ha habido un error.
      */
-    public int añadirPregunta(String pregunta, int tipo, String respuestaCorrecta, String opciones) {
+    public int añadirPregunta(String pregunta, int categoria, int tipo, String respuestaCorrecta, String opciones) {
         int mensajeError = 0;
 
         RandomAccessFile file = null;
@@ -33,7 +34,7 @@ public class GestionFichero {
                 preguntaByte[i] = 0;
             }
         }
-
+                                                    
         // Array de bytes para que la respuesta correcta ocupa siempre 200 bytes
         byte[] respuestaCorrectaByte = new byte[200];
         
@@ -70,6 +71,7 @@ public class GestionFichero {
 
             file.writeInt(id);
             file.write(preguntaByte);
+            file.writeInt(categoria);
             file.writeInt(tipo);
             file.write(respuestaCorrectaByte);
             file.write(opcionesByte);
@@ -110,28 +112,52 @@ public class GestionFichero {
         return id;
     }
 
-    public void listaPreguntas() {
+    /**
+     * Este metodo devuelve un ArrayList de Array de String con todas las preguntas que hay en el fichero.
+     * Si el fichero no existe devuelve null.
+     * 
+     * @return Devuelve un ArrayList de Array de String con todas las preguntas que hay en el fichero.
+     */
+    public ArrayList<String[]> listaPreguntas() {
+        ArrayList<String[]> arrayList = null;
         RandomAccessFile file = null;
 
         try {
             file = new RandomAccessFile(NOMBRE_FICHERO, "r");
+
+            String[] registro = new String[7];
+            arrayList = new ArrayList<String[]>();
+
             while (file.getFilePointer() < file.length()) {
-                System.out.println("Id: " + file.readInt());
+
+                registro[0] = String.valueOf(file.readInt()); //ID
+
                 byte[] pregunta = new byte[600];
                 file.read(pregunta);
-                System.out.println("Pregunta: " + new String(pregunta));
-                System.out.println("Tipo: " + file.readInt());
+                registro[1] = new String(pregunta); //Pregunta
+
+                registro[2] = String.valueOf(file.readInt()); //CategoriaRespuesta
+
+                registro[3] = String.valueOf(file.readInt()); //TipoRespuesta
+
                 byte[] respuesta = new byte[200];
                 file.read(respuesta);
-                System.out.println("Respuesta correcta: " + new String(respuesta));
+                registro[4] = new String(respuesta); //RespuestaCorrecta
+                
                 byte[] opcion = new byte[600];
                 file.read(opcion);
-                System.out.println("Opciones: " + new String(opcion));
-                System.out.println("Borredo: " + file.readInt());
+                registro[5] = new String(opcion); //Opciones
+
+                registro[6] = String.valueOf(file.readInt()); //Estado
+
+                arrayList.add(registro);
             }
+
             file.close();
         } catch (Exception e) {
-            System.out.println("Error");
+            arrayList = null;
         }
+
+        return arrayList;
     }
 }
