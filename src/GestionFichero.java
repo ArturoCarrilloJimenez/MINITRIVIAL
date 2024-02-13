@@ -178,7 +178,7 @@ public class GestionFichero {
 
             while (file.getFilePointer() < file.length()) {
                 file.seek((id - 1) * TAMAÑO_PREGUNTA);
-                
+
                 registro = new String[7];
 
                 registro[0] = String.valueOf(file.readInt()); //ID
@@ -209,5 +209,102 @@ public class GestionFichero {
         }
 
         return registro;
+    }
+
+    /**
+     * Este metodo modifica el estado de una pregunta.
+     * 
+     * @param id Este es el identificador de la pregunta que se quiere modificar.
+     * @param pregunta Esta es la pregunta que se le quiere asignar a la pregunta.
+     * 
+     * @return Devuelve 0 si se ha modificado correctamente, 1 si ha habido un error.
+     */
+    public int modificarPregunta(int id, String pregunta) {
+        int mensajeError = 0;
+
+        RandomAccessFile file = null;
+
+        try {
+            file = new RandomAccessFile(NOMBRE_FICHERO, "rw");
+
+            file.seek((id - 1) * TAMAÑO_PREGUNTA + 4);
+
+            // Array de bytes para que la pregunta ocupe siempre 600 bytes
+            byte[] preguntaByte = new byte[600];
+
+            // Asigna los datos de pregunta
+            for (int i = 0; i < preguntaByte.length; i++) {
+                if (pregunta.length() > i) {
+                    preguntaByte[i] = (byte) pregunta.charAt(i);
+                }
+                else {
+                    preguntaByte[i] = 0;
+                }
+            }
+
+            file.write(preguntaByte);
+
+            file.close();
+        } catch (Exception e) {
+            mensajeError = -1;
+        }
+
+        return mensajeError;
+    }
+
+    /**
+     * Este metodo modifica la respuesta correcta de una pregunta y las opciones de la pregunta.
+     * 
+     * @param id Este es el identificador de la pregunta que se quiere modificar.
+     * @param respuestaCorrecta Esta es la respuesta correcta que se le quiere asignar a la pregunta.
+     * @param opciones Estas son las opciones que se le quiere asignar a la pregunta.
+     * 
+     * @return Devuelve 0 si se ha modificado correctamente, 1 si ha habido un error.
+     */
+    public int modificarRespuestaYOpciones(int id, String respuestaCorrecta, String opciones) {
+        int mensajeError = 0;
+
+        RandomAccessFile file = null;
+
+        try {
+            file = new RandomAccessFile(NOMBRE_FICHERO, "rw");
+
+            file.seek((id - 1) * TAMAÑO_PREGUNTA + 612);
+
+            // Array de bytes para que la respuesta correcta ocupa siempre 200 bytes
+            byte[] respuestaCorrectaByte = new byte[200];
+            
+            // Asigna los datos de la respuesta
+            for (int i = 0; i < respuestaCorrectaByte.length; i++) {
+                if (respuestaCorrecta.length() > i) {
+                    respuestaCorrectaByte[i] = (byte) respuestaCorrecta.charAt(i);
+                }
+                else {
+                    respuestaCorrectaByte[i] = 0;
+                }
+            }
+
+            // Array de bytes para que las opciones ocupen siempre 600 bytes
+            byte[] opcionesByte = new byte[600];
+
+            // Asigna los datos de las opciones
+            for (int i = 0; i < opcionesByte.length; i++) {
+                if (opciones.length() > i) {
+                    opcionesByte[i] = (byte) opciones.charAt(i);
+                }
+                else {
+                    opcionesByte[i] = 0;
+                }
+            }
+
+            file.write(respuestaCorrectaByte);
+            file.write(opcionesByte);
+
+            file.close();
+        } catch (Exception e) {
+            mensajeError = -1;
+        }
+
+        return mensajeError;
     }
 }

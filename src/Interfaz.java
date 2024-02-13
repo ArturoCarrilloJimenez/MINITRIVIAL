@@ -39,7 +39,7 @@ public class Interfaz {
                     buscarPregunta();
                     break;
                 case 4:
-                    
+                    modificarPregunta();
                     break;
                 case 5:
                     
@@ -81,20 +81,8 @@ public class Interfaz {
      * Este metodo se encarga de preguntar todos los datos necesarios de una pregunta para despues añadirla al fichero.
      */
     public static void añadirPregunta() {
-        String pregunta = "";
-        scanner.nextLine();
-
-        // Pregunta por la pregunta, esta no puede tener mas de 600 caracteres
-        System.out.println("\nIntroduzca la pregunta: ");
+        String pregunta = introducirPregunta();
         
-        do {
-            pregunta = scanner.nextLine();
-
-            if (pregunta.length() > 600) {
-                System.out.println("La pregunta no puede tener mas de 600 caracteres");
-            }
-        } while (pregunta.length() > 600);
-
         // Mustra las categorias de preguntas que se pueden añadir
         System.out.println("\nDe que categoria es la pregunta: ");
 
@@ -125,6 +113,37 @@ public class Interfaz {
             tipo = introducirNumero();
         } while (tipo < 1 || tipo > 3);
 
+        String[] respuestaYOpciones = introducirRespuestaYOpciones(tipo);
+
+        // Añade la pregunta al fichero y muestra un mensaje de error si ha habido alguno
+        int mensajeError = gestionFichero.añadirPregunta(pregunta, categoria, tipo, respuestaYOpciones[0], respuestaYOpciones[1]);
+
+        if (mensajeError == 0) {
+            System.out.println("\nLa pregunta se ha añadido correctamente");
+        } else {
+            System.out.println("\nHa habido un error al añadir la pregunta");
+        }
+    }
+
+    public static String introducirPregunta() {
+        String pregunta = "";
+        scanner.nextLine();
+
+        // Pregunta por la pregunta, esta no puede tener mas de 600 caracteres
+        System.out.println("\nIntroduzca la pregunta: ");
+        
+        do {
+            pregunta = scanner.nextLine();
+
+            if (pregunta.length() > 600) {
+                System.out.println("La pregunta no puede tener mas de 600 caracteres");
+            }
+        } while (pregunta.length() > 600);
+
+        return pregunta;
+    }
+
+    public static String[] introducirRespuestaYOpciones(int tipo) {
         String respuestaCorrecta = "";
         String opciones = "";
 
@@ -208,14 +227,7 @@ public class Interfaz {
                 break;
         }
 
-        // Añade la pregunta al fichero y muestra un mensaje de error si ha habido alguno
-        int mensajeError = gestionFichero.añadirPregunta(pregunta, categoria, tipo, respuestaCorrecta, opciones);
-
-        if (mensajeError == 0) {
-            System.out.println("\nLa pregunta se ha añadido correctamente");
-        } else {
-            System.out.println("\nHa habido un error al añadir la pregunta");
-        }
+        return new String[] {respuestaCorrecta, opciones};
     }
 
     /**
@@ -306,6 +318,11 @@ public class Interfaz {
         }
     }
 
+    /**
+     * Opcion 3 Buscar una pregunta
+     * Este metodo se encarga de buscar una pregunta
+     * Esta puede ser buscada por su id
+     */
     public static void buscarPregunta() {
         System.out.println("\nPor que parametro deseas buscar la pregunta");
 
@@ -338,5 +355,61 @@ public class Interfaz {
             default:
                 break;
         }
+    }
+
+    public static void modificarPregunta() {
+        int id;
+
+        System.out.print("Introduce el Id: ");
+        id = introducirNumero();
+        if (id < 1) {
+            System.out.println("Solo es posible introducir un id mayor o igual a 1");
+        }
+
+        String[] pregunta = gestionFichero.buscarId(id);
+
+        if (pregunta != null) {
+            mostrarPregunta(pregunta);
+
+            System.out.println("\nQue parametro deseas modificar");
+
+            System.out.println("\n1. Pregunta");
+            System.out.println("2. Respuesta");
+
+            int opcion;
+
+            do {
+                System.out.println("Seleciona una de las opciones anteriores: ");
+                opcion = introducirNumero();
+            } while (opcion < 1 || opcion > 2);
+
+            switch (opcion) {
+                case 1:
+                    String nuevaPregunta = introducirPregunta();
+                    
+                    int mensajeError = gestionFichero.modificarPregunta(id, nuevaPregunta);
+
+                    if (mensajeError == 0) {
+                        System.out.println("La pregunta se ha modificado correctamente");
+                    } else {
+                        System.out.println("Ha habido un error al modificar la pregunta");
+                    }
+                    break;
+                case 2:
+                    String[] respuestaYOpciones = introducirRespuestaYOpciones(Integer.parseInt(pregunta[3]));
+
+                    int mensajeError2 = gestionFichero.modificarRespuestaYOpciones(id, respuestaYOpciones[0], respuestaYOpciones[1]);
+
+                    if (mensajeError2 == 0) {
+                        System.out.println("La respuesta se ha modificado correctamente");
+                    } else {
+                        System.out.println("Ha habido un error al modificar la respuesta");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {System.out.println("No se ha encontrado ninguna pregunta con ese Id.");}
     }
 }
