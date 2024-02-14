@@ -1,13 +1,22 @@
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
+/**
+ * Esta clase se encarga de mostrar el menú principal de la aplicación y de gestionar todas las opciones que se pueden realizar.
+ * 
+ * @version 1.0
+ * @since 1.0
+ */
 public class Interfaz {
     public static Scanner scanner = new Scanner(System.in);
     public static GestionFichero gestionFichero = new GestionFichero();
 
-    //Método para mostrar el menú principal de la aplicación
+    /**
+     * Este metodo se encarga de mostrar el menú principal de la aplicación y de gestionar todas las opciones que se pueden realizar.
+     * 
+     * @param args Argumentos que se pueden pasar al ejecutar la aplicación. No se utilizan.
+     */
     public static void main(String[] args) {
         int opcion = -1;
         do {
@@ -16,7 +25,7 @@ public class Interfaz {
             System.out.println("2. Ver lista de preguntas");
             System.out.println("3. Buscar una pregunta");
             System.out.println("4. Modificar una pregunta");
-            System.out.println("5. Borrar una pregunta");
+            System.out.println("5. Modificar el estado de una pregunta");
             System.out.println("6. Elegir pregunta al azar");
             System.out.println("7. Salir\n");
 
@@ -42,12 +51,9 @@ public class Interfaz {
                     modificarPregunta();
                     break;
                 case 5:
-                    
+                    modificarEstadoPregunta();
                     break;
                 case 6:
-                    
-                    break;
-                case 7:
                     
                     break;
                 default:
@@ -125,6 +131,11 @@ public class Interfaz {
         }
     }
 
+    /**
+     * Este metodo se encarga de pedir una pregunta por teclado.
+     * 
+     * @return Devuelve la pregunta introducida por teclado.
+     */
     public static String introducirPregunta() {
         String pregunta = "";
         scanner.nextLine();
@@ -143,6 +154,12 @@ public class Interfaz {
         return pregunta;
     }
 
+    /**
+     * Este metodo se encarga de pedir una respuesta y las opciones de una pregunta por teclado.
+     * 
+     * @param tipo Tipo de pregunta que se va a introducir.
+     * @return Devuelve un array de String con la respuesta y las opciones de la pregunta.
+     */
     public static String[] introducirRespuestaYOpciones(int tipo) {
         String respuestaCorrecta = "";
         String opciones = "";
@@ -235,16 +252,18 @@ public class Interfaz {
      * Este metodo se encarga de mostrar todas las preguntas que hay en el fichero.
      */
     public static void verListaPreguntas() {
-        ArrayList<String[]> listaPreguntas = gestionFichero.listaPreguntas();
+        String[][] listaPreguntas = gestionFichero.listaPreguntas();
 
         if (listaPreguntas == null) {
             System.out.println("\nLo siento, algo ha ido mal al intentar leer el fichero de preguntas y respuestas.");
             System.out.println("No hay preguntas en el fichero");
         } else {
-            for (int i = 0; i < listaPreguntas.size(); i++) {
+            for (int i = 0; i < listaPreguntas.length; i++) {
                 System.out.println("\nPregunta numero " + (i + 1) + ":");
 
-                mostrarPregunta(listaPreguntas.get(i));
+                String[] pregunta = listaPreguntas[i];
+
+                mostrarPregunta(pregunta);
             }
         }
     }
@@ -357,6 +376,10 @@ public class Interfaz {
         }
     }
 
+    /**
+     * Opcion 4 Modificar una pregunta
+     * Este metodo se encarga de buscar una pregunta por su id y modificarla
+     */
     public static void modificarPregunta() {
         int id;
 
@@ -408,6 +431,51 @@ public class Interfaz {
                     break;
                 default:
                     break;
+            }
+        }
+        else {System.out.println("No se ha encontrado ninguna pregunta con ese Id.");}
+    }
+
+    /**
+     * Opcion 5 Modificar el estado de una pregunta
+     * Este metodo se encarga de buscar una pregunta por su id y modificar su estado
+     */
+    public static void modificarEstadoPregunta() {
+        int id;
+
+        do {
+            System.out.print("Introduce el Id: ");
+            id = introducirNumero();
+            if (id < 1) {
+                System.out.println("Solo es posible introducir un id mayor o igual a 1");
+            }
+        } while (id < 1);
+
+        String[] pregunta = gestionFichero.buscarId(id);
+
+        if (pregunta != null) {
+            mostrarPregunta(pregunta);
+
+            int estado;
+
+            System.out.println("\nQue estado deseas que tenga la pregunta");
+            System.out.println("\n1. Activa");
+            System.out.println("2. Inactiva\n");
+
+            do {
+                System.out.print("Introduce el estado: ");
+                estado = introducirNumero();
+                if (estado < 1 || estado > 2) {
+                    System.out.println("Solo es posible introducir uno de los estados anteriores");
+                }
+            } while (estado < 1 || estado > 2);
+
+            int mensajeError = gestionFichero.modificarEstado(id,(estado - 1));
+
+            if (mensajeError == 0) {
+                System.out.println("Se a canviado el estado de la pregunta correctamente");
+            } else {
+                System.out.println("No se a canviado el estado de la pregunta");
             }
         }
         else {System.out.println("No se ha encontrado ninguna pregunta con ese Id.");}

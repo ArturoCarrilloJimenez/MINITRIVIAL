@@ -1,6 +1,12 @@
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 
+/**
+ * 
+ * Esta clase se encarga de gestionar el fichero de preguntas y respuestas.
+ * 
+ * @version 1.0
+ * @since 1.0
+ */
 public class GestionFichero {
     private static final String NOMBRE_FICHERO = "fichero.bin";
     public static final int TAMAÑO_PREGUNTA = 1416;
@@ -114,44 +120,44 @@ public class GestionFichero {
     }
 
     /**
-     * Este metodo devuelve un ArrayList de Array de String con todas las preguntas que hay en el fichero.
-     * Si el fichero no existe devuelve null.
+     * Este metodo muestra todas las preguntas que hay en el fichero.
      * 
-     * @return Devuelve un ArrayList de Array de String con todas las preguntas que hay en el fichero.
+     * @param arrayList Este es una matriz de preguntas que se quiere mostrar.
+     * 
+     * @return Devuelve null si no hay preguntas, si hay preguntas devuelve una matriz de preguntas.
      */
-    public ArrayList<String[]> listaPreguntas() {
-        ArrayList<String[]> arrayList = null;
+    public String[][] listaPreguntas() {
+        String[][] arrayList = null;
         RandomAccessFile file = null;
 
         try {
             file = new RandomAccessFile(NOMBRE_FICHERO, "r");
 
-            String[] registro = new String[7];
-            arrayList = new ArrayList<String[]>();
-
+            arrayList = new String[(int)(file.length() / TAMAÑO_PREGUNTA)][7];
+            int cont = 0;
             while (file.getFilePointer() < file.length()) {
 
-                registro[0] = String.valueOf(file.readInt()); //ID
+                arrayList[cont][0] = String.valueOf(file.readInt()); //ID
 
                 byte[] pregunta = new byte[600];
                 file.read(pregunta);
-                registro[1] = new String(pregunta); //Pregunta
+                arrayList[cont][1] = new String(pregunta); //Pregunta
 
-                registro[2] = String.valueOf(file.readInt()); //CategoriaRespuesta
+                arrayList[cont][2] = String.valueOf(file.readInt()); //CategoriaRespuesta
 
-                registro[3] = String.valueOf(file.readInt()); //TipoRespuesta
+                arrayList[cont][3] = String.valueOf(file.readInt()); //TipoRespuesta
 
                 byte[] respuesta = new byte[200];
                 file.read(respuesta);
-                registro[4] = new String(respuesta); //RespuestaCorrecta
+                arrayList[cont][4] = new String(respuesta); //RespuestaCorrecta
                 
                 byte[] opcion = new byte[600];
                 file.read(opcion);
-                registro[5] = new String(opcion); //Opciones
+                arrayList[cont][5] = new String(opcion); //Opciones
 
-                registro[6] = String.valueOf(file.readInt()); //Estado
+                arrayList[cont][6] = String.valueOf(file.readInt()); //Estado
 
-                arrayList.add(registro);
+                cont++;
             }
 
             file.close();
@@ -176,32 +182,29 @@ public class GestionFichero {
         try {
             file = new RandomAccessFile(NOMBRE_FICHERO, "r");
 
-            while (file.getFilePointer() < file.length()) {
-                file.seek((id - 1) * TAMAÑO_PREGUNTA);
+            file.seek((id - 1) * TAMAÑO_PREGUNTA);
 
-                registro = new String[7];
+            registro = new String[7];
 
-                registro[0] = String.valueOf(file.readInt()); //ID
+            registro[0] = String.valueOf(file.readInt()); //ID
 
-                byte[] pregunta = new byte[600];
-                file.read(pregunta);
-                registro[1] = new String(pregunta); //Pregunta
+            byte[] pregunta = new byte[600];
+            file.read(pregunta);
+            registro[1] = new String(pregunta); //Pregunta
 
-                registro[2] = String.valueOf(file.readInt()); //CategoriaRespuesta
+            registro[2] = String.valueOf(file.readInt()); //CategoriaRespuesta
 
-                registro[3] = String.valueOf(file.readInt()); //TipoRespuesta
+            registro[3] = String.valueOf(file.readInt()); //TipoRespuesta
 
-                byte[] respuesta = new byte[200];
-                file.read(respuesta);
-                registro[4] = new String(respuesta); //RespuestaCorrecta
-                
-                byte[] opcion = new byte[600];
-                file.read(opcion);
-                registro[5] = new String(opcion); //Opciones
+            byte[] respuesta = new byte[200];
+            file.read(respuesta);
+            registro[4] = new String(respuesta); //RespuestaCorrecta
+            
+            byte[] opcion = new byte[600];
+            file.read(opcion);
+            registro[5] = new String(opcion); //Opciones
 
-                registro[6] = String.valueOf(file.readInt()); //Estado
-
-            }
+            registro[6] = String.valueOf(file.readInt()); //Estado
 
             file.close();
         } catch (Exception e) {
@@ -299,6 +302,34 @@ public class GestionFichero {
 
             file.write(respuestaCorrectaByte);
             file.write(opcionesByte);
+
+            file.close();
+        } catch (Exception e) {
+            mensajeError = -1;
+        }
+
+        return mensajeError;
+    }
+
+    /**
+     * Este metodo modifica el estado de una pregunta.
+     * 
+     * @param id Este es el identificador de la pregunta que se quiere modificar.
+     * @param estado Este es el estado que se le quiere asignar a la pregunta.
+     * 
+     * @return Devuelve 0 si se ha modificado correctamente, 1 si ha habido un error.
+     */
+    public int modificarEstado(int id, int estado) {
+        int mensajeError = 0;
+
+        RandomAccessFile file = null;
+
+        try {
+            file = new RandomAccessFile(NOMBRE_FICHERO, "rw");
+
+            file.seek((id - 1) * TAMAÑO_PREGUNTA + 1412);
+
+            file.writeInt(estado);
 
             file.close();
         } catch (Exception e) {
