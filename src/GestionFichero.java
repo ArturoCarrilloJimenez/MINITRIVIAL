@@ -406,4 +406,31 @@ public class GestionFichero {
 
         return registro;
     }
+
+    /**
+     * Metodo que busca una pregunta aleatoria por una categoria
+     * 
+     * @param categoria  la categoria de la pregunta a buscar
+     * @return Este retorna un array de String con la pregunta si lo a encontrado, si no devuelve null
+     */
+    public String[] aleatoriaPorCategoria(int categoria) {
+        String[] registro = null;
+
+        int numPreguntas = getId() - 1;
+        int i = 0;
+
+        boolean encontrada = false;
+
+        do {
+            registro = preguntaAleatoria();
+
+            if (Integer.parseInt(registro[2]) != categoria) {
+                registro = null;
+            }  else {encontrada = true;}
+
+            i++;
+        } while (i < numPreguntas  && !encontrada);
+
+        return registro;
+    }
 }

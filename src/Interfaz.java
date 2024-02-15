@@ -500,38 +500,83 @@ public class Interfaz {
             case 1:
                 String[] pregunta = gestionFichero.preguntaAleatoria();
 
-                if (pregunta != null) {
-                    System.out.println("\nLa pregunta elegida es:");
-                    System.out.println(pregunta[1]);
-                    System.out.println();
-
-                    if (!pregunta[5].equals("")) {
-                        String[] separatedStrings = pregunta[5].split("\\|");
-
-                        for (int i = 0; i < separatedStrings.length; i++) {
-                            System.out.println("Opcion  " + (i+1) + ": " + separatedStrings[i] );
-                        }
-                    }
-                    
-                    System.out.println("\nIntroduze la respuesta correcta:");
-                    scanner.nextLine(); //Para saltar un salto de linea
-                    String respuesta = scanner.nextLine();
-
-                    if (respuesta.equals(pregunta[4])) {
-                        System.out.println("La respuesta es correcta");
-                    } else {
-                        System.out.println("La respuesta es incorrecta");
-                    }
-
-                    System.out.println("\nLa respuesta correcta es: " + pregunta[4]);
-                    
-                } else {
-                    System.out.println("No hay preguntas en el fichero");
-                }
+                preguntaYRespuesta(pregunta);
                 break;
-        
+            case 2:
+                System.out.println("\nDe que categoria deseas que sea la pregunta");
+
+                System.out.println("\n1. Geografía");
+                System.out.println("2. Entretenimiento");
+                System.out.println("3. Historia");
+                System.out.println("4. Arte y Literatura");
+                System.out.println("5. Deportes y Ocio");
+                System.out.println("6. Ciencia y Naturaleza\n");
+
+                System.out.println();
+                int categoria;
+
+                do {
+                    System.out.println("Introduce una de las categorias anteriores");
+                    categoria = introducirNumero();
+                } while (categoria < 1  || categoria > 7);
+
+                String[] preguntaPorCategoria = gestionFichero.aleatoriaPorCategoria(categoria);
+
+                preguntaYRespuesta(preguntaPorCategoria);
+                break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Este metodo muestra la pregunta y le pide al usuario la respuesta
+     * Este muestra si la pregunta correcta o no
+     * 
+     * @param pregunta Array de String con todos los datos de la pregunta
+     * 
+     */
+    public static void preguntaYRespuesta(String[] pregunta) {
+        if (pregunta != null) {
+            System.out.println("\nLa pregunta elegida es:");
+            System.out.println(pregunta[1]);
+            System.out.println();
+
+            if (!pregunta[5].equals("")) {
+                String[] separatedStrings = pregunta[5].split("\\|");
+
+                for (int i = 0; i < separatedStrings.length; i++) {
+                    System.out.println("Opcion  " + (i+1) + ": " + separatedStrings[i] );
+                }
+            }
+            
+            System.out.println("\nIntroduze la respuesta correcta:");
+            scanner.nextLine(); //Para saltar un salto de linea
+            String respuesta = scanner.nextLine();
+
+            byte[] respuestaByte = new byte[200];
+
+            // Asigna los datos de la respuesta
+            for (int i = 0; i < respuestaByte.length; i++) {
+                if (respuesta.length() > i) {
+                    respuestaByte[i] = (byte) respuesta.charAt(i);
+                }
+                else {
+                    respuestaByte[i] = 0;
+                }
+            }
+
+            respuesta = new String(respuestaByte);
+
+            if (respuesta.equals(pregunta[4])) {
+                System.out.println("\nLa respuesta es correcta");
+            } else {
+                System.out.println("\nLa respuesta es incorrecta");
+                System.out.println("\nLa respuesta correcta es: " + pregunta[4]);
+            }
+            
+        } else {
+            System.out.println("No hay preguntas en el fichero");
         }
     }
 }
