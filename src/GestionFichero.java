@@ -4,7 +4,7 @@ import java.io.RandomAccessFile;
  * 
  * Esta clase se encarga de gestionar el fichero de preguntas y respuestas.
  * 
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 public class GestionFichero {

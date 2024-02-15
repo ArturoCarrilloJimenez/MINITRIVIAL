@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Esta clase se encarga de mostrar el menú principal de la aplicación y de gestionar todas las opciones que se pueden realizar.
  * 
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 public class Interfaz {
