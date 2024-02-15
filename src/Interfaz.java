@@ -54,7 +54,7 @@ public class Interfaz {
                     modificarEstadoPregunta();
                     break;
                 case 6:
-                    
+                        elegirPreguntaAlAzar();
                     break;
                 default:
                     
@@ -146,10 +146,10 @@ public class Interfaz {
         do {
             pregunta = scanner.nextLine();
 
-            if (pregunta.length() > 600) {
-                System.out.println("La pregunta no puede tener mas de 600 caracteres");
+            if (pregunta.length() > 300) {
+                System.out.println("La pregunta no puede tener mas de 300 caracteres");
             }
-        } while (pregunta.length() > 600);
+        } while (pregunta.length() > 300);
 
         return pregunta;
     }
@@ -173,10 +173,10 @@ public class Interfaz {
                 do {
                     respuestaCorrecta = scanner.nextLine();
 
-                    if (respuestaCorrecta.length() > 200) {
-                        System.out.println("La respuesta no puede tener mas de 200 caracteres");
+                    if (respuestaCorrecta.length() > 100) {
+                        System.out.println("La respuesta no puede tener mas de 100 caracteres");
                     }
-                } while (respuestaCorrecta.length() > 200);    
+                } while (respuestaCorrecta.length() > 100);    
                 break;
             case 2: // Pregunta con respuesta multiple
                 // La respuesta no puede tener mas de 199 caracteres y las opciones no mas de 199 caracteres
@@ -187,10 +187,10 @@ public class Interfaz {
                 do {
                     respuestaCorrecta = scanner.nextLine();
 
-                    if (respuestaCorrecta.length() > 199) {
-                        System.out.println("La respuesta no puede tener mas de 199 caracteres");
+                    if (respuestaCorrecta.length() > 99) {
+                        System.out.println("La respuesta no puede tener mas de 99 caracteres");
                     }
-                } while (respuestaCorrecta.length() > 199);   
+                } while (respuestaCorrecta.length() > 99);   
 
                 arrayOpciones[0] = respuestaCorrecta;
 
@@ -200,10 +200,10 @@ public class Interfaz {
                     do {
                         opcion = scanner.nextLine();
     
-                        if (opcion.length() > 199) {
-                            System.out.println("La opcion no puede tener mas de 199 caracteres");
+                        if (opcion.length() > 99) {
+                            System.out.println("La opcion no puede tener mas de 99 caracteres");
                         }
-                    } while (opcion.length() > 199);   
+                    } while (opcion.length() > 99);   
 
                     arrayOpciones[i + 1] = opcion;
                 }
@@ -479,5 +479,59 @@ public class Interfaz {
             }
         }
         else {System.out.println("No se ha encontrado ninguna pregunta con ese Id.");}
+    }
+
+    /**
+     * Opcion 6 Elegir pregunta al azar
+     * Este metodo se encarga de elegir una pregunta al azar
+     */
+    public static void elegirPreguntaAlAzar() {
+        System.out.println("\nQue tipo de pregunta quieres que sea");
+        System.out.println("\n1. Pregunta aleatoria");
+        System.out.println("2. Pregunta por categoria");
+
+        int opcion;
+        do {
+            System.out.println("\nPor favor, elija una de las opciónes anteriores: ");
+            opcion = introducirNumero();
+        } while (opcion < 1 || opcion > 2);
+
+        switch (opcion) {
+            case 1:
+                String[] pregunta = gestionFichero.preguntaAleatoria();
+
+                if (pregunta != null) {
+                    System.out.println("\nLa pregunta elegida es:");
+                    System.out.println(pregunta[1]);
+                    System.out.println();
+
+                    if (!pregunta[5].equals("")) {
+                        String[] separatedStrings = pregunta[5].split("\\|");
+
+                        for (int i = 0; i < separatedStrings.length; i++) {
+                            System.out.println("Opcion  " + (i+1) + ": " + separatedStrings[i] );
+                        }
+                    }
+                    
+                    System.out.println("\nIntroduze la respuesta correcta:");
+                    scanner.nextLine(); //Para saltar un salto de linea
+                    String respuesta = scanner.nextLine();
+
+                    if (respuesta.equals(pregunta[4])) {
+                        System.out.println("La respuesta es correcta");
+                    } else {
+                        System.out.println("La respuesta es incorrecta");
+                    }
+
+                    System.out.println("\nLa respuesta correcta es: " + pregunta[4]);
+                    
+                } else {
+                    System.out.println("No hay preguntas en el fichero");
+                }
+                break;
+        
+            default:
+                break;
+        }
     }
 }

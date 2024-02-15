@@ -338,4 +338,72 @@ public class GestionFichero {
 
         return mensajeError;
     }
+
+    /**
+     * Este metodo devuelve una pregunta aleatoria.
+     * Si la pregunta esta desactivada vusca otra
+     * 
+     * @return Devuelve null si no hay preguntas, si hay preguntas devuelve un array de String.
+     */
+    public String[] preguntaAleatoria() {
+        String[] registro = null;
+        RandomAccessFile file = null;
+
+        try {
+            file = new RandomAccessFile(NOMBRE_FICHERO, "r");
+
+            int numPreguntas = (int)(file.length() / TAMAÑO_PREGUNTA);
+            int i = 0;
+            int[] preguntas = new int[numPreguntas];
+
+            // Genera un numero aleatorio y comprueba que no se repita
+            do {
+                int aleatorio = (int) (Math.random() * numPreguntas);
+                preguntas[i] = aleatorio;
+
+                for (int j = 0; j < i; j++) {
+                    if (preguntas[j] == aleatorio) {
+                        aleatorio = (int) (Math.random() * numPreguntas);
+                        j = -1;
+                    }
+                }
+
+                file.seek(aleatorio * TAMAÑO_PREGUNTA);
+
+                registro = new String[7];
+
+                registro[0] = String.valueOf(file.readInt()); //ID
+
+                byte[] pregunta = new byte[600];
+                file.read(pregunta);
+                registro[1] = new String(pregunta); //Pregunta
+
+                registro[2] = String.valueOf(file.readInt()); //CategoriaRespuesta
+
+                registro[3] = String.valueOf(file.readInt()); //TipoRespuesta
+
+                byte[] respuesta = new byte[200];
+                file.read(respuesta);
+                registro[4] = new String(respuesta); //RespuestaCorrecta
+                
+                byte[] opcion = new byte[600];
+                file.read(opcion);
+                registro[5] = new String(opcion); //Opciones
+
+                registro[6] = String.valueOf(file.readInt()); //Estado
+
+                if (Integer.parseInt(registro[6]) == 1) {
+                    registro = null;
+                }
+
+                i++;
+            } while (registro == null && i < numPreguntas);
+
+            file.close();
+        } catch (Exception e) {
+            registro = null;
+        }
+
+        return registro;
+    }
 }
